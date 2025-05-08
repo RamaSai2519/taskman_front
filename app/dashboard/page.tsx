@@ -7,16 +7,8 @@ import { useAuth } from "@/hooks/use-auth"
 import { CheckCircle, Clock, ListTodo, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { TaskList } from "@/components/task-list"
-
-interface Task {
-  id: string
-  title: string
-  description: string
-  status: string
-  dueDate: string
-  assignedTo: string
-  createdBy: string
-}
+import { axiosInstance } from "@/lib/utils";
+import type { Task } from "@/types";
 
 interface DashboardData {
   assignedTasks: Task[]
@@ -34,13 +26,9 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
       try {
         const token = getToken()
-        const response = await fetch("/api/tasks/dashboard", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axiosInstance.get("/tasks/dashboard");
 
-        const data = await response.json()
+        const data = response.data;
 
         if (data.success) {
           setDashboardData(data.data)
@@ -102,7 +90,7 @@ export default function DashboardPage() {
             <div className="text-2xl font-bold">
               {dashboardData
                 ? dashboardData.assignedTasks.filter((task) => task.status === "Completed").length +
-                  dashboardData.createdTasks.filter((task) => task.status === "Completed").length
+                dashboardData.createdTasks.filter((task) => task.status === "Completed").length
                 : 0}
             </div>
             <p className="text-xs text-muted-foreground">Tasks that have been completed</p>

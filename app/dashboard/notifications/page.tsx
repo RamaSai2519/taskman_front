@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/hooks/use-auth"
 import { Bell, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { axiosInstance } from "@/lib/utils"
 
 interface Notification {
   _id: string
@@ -23,13 +24,13 @@ export default function NotificationsPage() {
     const fetchNotifications = async () => {
       try {
         const token = getToken()
-        const response = await fetch("/api/notifications", {
+        const response = await axiosInstance.get("/notifications", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
 
-        const data = await response.json()
+        const data = response.data
 
         if (data.success) {
           setNotifications(data.data)

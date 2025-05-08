@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { axiosInstance } from "@/lib/utils";
 
 export default function CreateTaskPage() {
   const [title, setTitle] = useState("")
@@ -49,16 +50,9 @@ export default function CreateTaskPage() {
         payload.assignedTo = assignedTo
       }
 
-      const response = await fetch("/api/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      })
+      const response = await axiosInstance.post("/tasks", payload);
 
-      const data = await response.json()
+      const data = response.data;
 
       if (data.success) {
         toast({

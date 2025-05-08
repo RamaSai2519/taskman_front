@@ -29,6 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import type { Task } from "@/types"
+import { axiosInstance } from "@/lib/utils";
 
 export default function TaskDetailPage({ params }: { params: { id: string } }) {
   const [task, setTask] = useState<Task | null>(null)
@@ -48,13 +49,13 @@ export default function TaskDetailPage({ params }: { params: { id: string } }) {
     const fetchTask = async () => {
       try {
         const token = getToken()
-        const response = await fetch(`/api/tasks/${params.id}`, {
+        const response = await axiosInstance.get(`/tasks/${params.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
 
-        const data = await response.json()
+        const data = await response.data
 
         if (data.success) {
           setTask(data.data.task)
@@ -105,16 +106,9 @@ export default function TaskDetailPage({ params }: { params: { id: string } }) {
         payload.dueDate = dueDate.toISOString()
       }
 
-      const response = await fetch(`/api/tasks/${params.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      })
+      const response = await axiosInstance.put(`/tasks/${params.id}`, payload)
 
-      const data = await response.json()
+      const data = await response.data
 
       if (data.success) {
         toast({

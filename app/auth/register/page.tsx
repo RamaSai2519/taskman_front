@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { axiosInstance } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,15 +25,9 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
-      })
+      const response = await axiosInstance.post("/auth/register", { name, email, password })
 
-      const data = await response.json()
+      const data = response.data
 
       if (data.success) {
         toast({

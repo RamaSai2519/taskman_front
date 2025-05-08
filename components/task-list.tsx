@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { Calendar, Edit } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
+import { axiosInstance } from "@/lib/utils"
 
 interface Task {
   _id: string
@@ -31,18 +32,11 @@ export function TaskList({ tasks, onTaskUpdated }: TaskListProps) {
   const handleStatusChange = async (taskId: string, completed: boolean) => {
     try {
       const token = getToken()
-      const response = await fetch(`/api/tasks/${taskId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          status: completed ? "Completed" : "Pending",
-        }),
+      const response = await axiosInstance.put(`/tasks/${taskId}`, {
+        status: completed ? "Completed" : "Pending",
       })
 
-      const data = await response.json()
+      const data = response.data
 
       if (data.success) {
         toast({

@@ -12,16 +12,8 @@ import { useAuth } from "@/hooks/use-auth"
 import { Loader2, Plus, Search } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-
-// Define the Task type
-interface Task {
-  id: string
-  title: string
-  description: string
-  status: string
-  priority: string
-  dueDate: string
-}
+import { axiosInstance } from "@/lib/utils"
+import type { Task } from "@/types";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
@@ -43,13 +35,13 @@ export default function TasksPage() {
       if (statusFilter) url += `status=${encodeURIComponent(statusFilter)}&`
       if (priorityFilter) url += `priority=${encodeURIComponent(priorityFilter)}&`
 
-      const response = await fetch(url, {
+      const response = await axiosInstance.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
 
-      const data = await response.json()
+      const data = response.data
 
       if (data.success) {
         setTasks(data.data)

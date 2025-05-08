@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { axiosInstance } from "@/lib/utils"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -25,15 +26,9 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      })
+      const response = await axiosInstance.post("/auth/login", { email, password })
 
-      const data = await response.json()
+      const data = response.data
 
       if (data.success) {
         toast({
