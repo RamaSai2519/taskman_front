@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -29,13 +29,35 @@ export default function CreateTaskPage() {
   const { getToken } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
+  const token = getToken()
+  interface User {
+    _id: string;
+    name: string;
+    email: string;
+  }
+
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axiosInstance.get("/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Failed to fetch users", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      const token = getToken()
       const payload: any = {
         title,
         description,
@@ -50,7 +72,9 @@ export default function CreateTaskPage() {
         payload.assignedTo = assignedTo
       }
 
-      const response = await axiosInstance.post("/tasks", payload);
+      const response = await axiosInstance.post("/tasks", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
 
       const data = response.data;
 
@@ -143,13 +167,19 @@ export default function CreateTaskPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="assignedTo">Assign To (User ID)</Label>
-              <Input
-                id="assignedTo"
-                placeholder="Enter user ID (optional)"
-                value={assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
-              />
+              <Label htmlFor="assignedTo">Assign To</Label>
+              <Select value={assignedTo} onValueChange={setAssignedTo}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a user" />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map((user) => (
+                    <SelectItem key={user._id} value={user._id}>
+                      {user.name} ({user.email})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">

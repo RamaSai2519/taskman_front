@@ -34,6 +34,10 @@ export function TaskList({ tasks, onTaskUpdated }: TaskListProps) {
       const token = getToken()
       const response = await axiosInstance.put(`/tasks/${taskId}`, {
         status: completed ? "Completed" : "Pending",
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       const data = response.data

@@ -30,7 +30,7 @@ export default function TasksPage() {
       setIsLoading(true)
       const token = getToken()
 
-      let url = "/api/tasks?"
+      let url = "/tasks?"
       if (searchQuery) url += `search=${encodeURIComponent(searchQuery)}&`
       if (statusFilter) url += `status=${encodeURIComponent(statusFilter)}&`
       if (priorityFilter) url += `priority=${encodeURIComponent(priorityFilter)}&`

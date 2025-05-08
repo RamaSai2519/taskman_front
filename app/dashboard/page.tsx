@@ -22,36 +22,38 @@ export default function DashboardPage() {
   const { getToken } = useAuth()
   const { toast } = useToast()
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const token = getToken()
-        const response = await axiosInstance.get("/tasks/dashboard");
+  const fetchDashboardData = async () => {
+    try {
+      const token = getToken()
+      const response = await axiosInstance.get("/tasks/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const data = response.data;
+      const data = response.data;
 
-        if (data.success) {
-          setDashboardData(data.data)
-        } else {
-          toast({
-            title: "Error",
-            description: data.msg || "Failed to fetch dashboard data",
-            variant: "destructive",
-          })
-        }
-      } catch (error) {
+      if (data.success) {
+        setDashboardData(data.data)
+      } else {
         toast({
           title: "Error",
-          description: "An error occurred while fetching dashboard data",
+          description: data.msg || "Failed to fetch dashboard data",
           variant: "destructive",
         })
-      } finally {
-        setIsLoading(false)
       }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while fetching dashboard data",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
     }
+  }
 
-    fetchDashboardData()
-  }, [getToken, toast])
+  useEffect(() => { fetchDashboardData() }, [getToken, toast])
 
   if (isLoading) {
     return (
@@ -122,7 +124,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {dashboardData?.assignedTasks && dashboardData.assignedTasks.length > 0 ? (
-                <TaskList tasks={dashboardData.assignedTasks} />
+                <TaskList tasks={dashboardData.assignedTasks} onTaskUpdated={fetchDashboardData} />
               ) : (
                 <p className="text-muted-foreground">No tasks assigned to you</p>
               )}
@@ -137,7 +139,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {dashboardData?.createdTasks && dashboardData.createdTasks.length > 0 ? (
-                <TaskList tasks={dashboardData.createdTasks} />
+                <TaskList tasks={dashboardData.createdTasks} onTaskUpdated={fetchDashboardData} />
               ) : (
                 <p className="text-muted-foreground">No tasks created by you</p>
               )}
@@ -152,7 +154,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {dashboardData?.overdueTasks && dashboardData.overdueTasks.length > 0 ? (
-                <TaskList tasks={dashboardData.overdueTasks} />
+                <TaskList tasks={dashboardData.overdueTasks} onTaskUpdated={fetchDashboardData} />
               ) : (
                 <p className="text-muted-foreground">No overdue tasks</p>
               )}
