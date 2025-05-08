@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       const token = getToken()
-      const response = await axiosInstance.get("/tasks/dashboard", {
+      const response = await axiosInstance.get("/dashboard", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
