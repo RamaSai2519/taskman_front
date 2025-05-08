@@ -4,7 +4,8 @@ import axios from 'axios';
 
 // Create an Axios instance
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://ugqy0d76e4.execute-api.us-east-1.amazonaws.com/main/api',
+  // baseURL: 'http://localhost:5000/api',
 });
 
 export function cn(...inputs: ClassValue[]) {

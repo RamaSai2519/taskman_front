@@ -28,9 +28,10 @@ export default function LoginPage() {
     try {
       const response = await axiosInstance.post("/auth/login", { email, password })
 
+      console.log("🚀 ~ handleSubmit ~ response:", response)
       const data = response.data
 
-      if (data.success) {
+      if (data.success === true) {
         toast({
           title: "Success",
           description: data.msg,
@@ -45,6 +46,7 @@ export default function LoginPage() {
         })
       }
     } catch (error) {
+      console.log("🚀 ~ handleSubmit ~ error:", error)
       toast({
         title: "Error",
         description: "An error occurred during login",
